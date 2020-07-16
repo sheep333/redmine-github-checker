@@ -2,20 +2,24 @@ import pandas as pd
 
 from django.http import HttpResponse
 
-from .forms import RedmineForm
+from .forms import GitBranchForm, RedmineAuthForm, RedmineIssueFilterForm
 from .redmine import Redmine
 from .git_checker import GitChecker
 
 
 def home(request):
-    form = RedmineForm()
-    if request.method == "POST" and form.is_valid():
-        param_dict = request.POST
-        redmine = Redmine(**param_dict)
-        issues = redmine.filter_issues(**param_dict)
+    auth_form = RedmineAuthForm(request.POST or None)
+    issue_filter_form = RedmineIssueFilterForm(request.POST or None)
+    git_branch_form = GitBranchForm(request.POST or None)
+
+    if request.method == "POST" and auth_form.is_valid() and \
+            issue_filter_form.is_valid() and git_branch_form.is_valid():
+
+        redmine = Redmine(**auth_form.cleaned_data)
+        issues = redmine.filter_issues(**issue_filter_form.cleaned_data)
 
         result = []
-        git_checker = GitChecker(**param_dict)
+        git_checker = GitChecker(**git_branch_form.cleaned_data)
         for issue in issues:
             result += git_checker(issue.issue_id)
 
