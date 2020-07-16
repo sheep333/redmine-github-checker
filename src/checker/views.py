@@ -1,6 +1,7 @@
 import pandas as pd
 
 from django.http import HttpResponse
+from django.shortcuts import render
 
 from .forms import GitBranchForm, RedmineAuthForm, RedmineIssueFilterForm
 from .redmine import Redmine
@@ -11,6 +12,12 @@ def home(request):
     auth_form = RedmineAuthForm(request.POST or None)
     issue_filter_form = RedmineIssueFilterForm(request.POST or None)
     git_branch_form = GitBranchForm(request.POST or None)
+
+    context = {
+        'auth_form': auth_form,
+        'issue_filter_form': issue_filter_form,
+        'git_branch_form': git_branch_form,
+    }
 
     if request.method == "POST" and auth_form.is_valid() and \
             issue_filter_form.is_valid() and git_branch_form.is_valid():
@@ -29,3 +36,5 @@ def home(request):
         df.to_csv(path_or_buf=response, index=False)
 
         return response
+
+    return render(request, 'checker/index.html', context)
