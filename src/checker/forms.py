@@ -4,7 +4,7 @@ from django import forms
 class RedmineForm(forms.Form):
     url = forms.URLField(required=True)
     user = forms.CharField(max_length=255, required=False)
-    password = forms.CharField(widget=forms.Passwordnput, required=False)
+    password = forms.CharField(widget=forms.PasswordInput, required=False)
 
 
 class CheckProjectForm(forms.Form):
