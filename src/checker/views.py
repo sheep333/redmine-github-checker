@@ -3,19 +3,22 @@ import pandas as pd
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .forms import GitBranchForm, RedmineAuthForm, RedmineIssueFilterForm
+from .forms import (GitBranchForm, RedmineAuthForm,
+                    RedmineIssueFilterFormset, RedmineIssueEmptyFilterFormset)
 from .redmine import Redmine
 from .git_checker import GitChecker
 
 
 def home(request):
     auth_form = RedmineAuthForm(request.POST or None)
-    issue_filter_form = RedmineIssueFilterForm(request.POST or None)
+    issue_filter_form = RedmineIssueFilterFormset(request.POST or None)
+    issue_empty_filter_form = RedmineIssueEmptyFilterFormset(request.POST or None)
     git_branch_form = GitBranchForm(request.POST or None)
 
     context = {
         'auth_form': auth_form,
         'issue_filter_form': issue_filter_form,
+        'issue_empty_filter_form': issue_empty_filter_form,
         'git_branch_form': git_branch_form,
     }
 
