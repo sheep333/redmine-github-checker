@@ -1,6 +1,9 @@
 from os import getenv
+
 from django import forms
 from django.core.exceptions import ValidationError
+
+from .redmine import RedmineModule
 
 
 class RedmineAuthForm(forms.Form):
@@ -37,10 +40,30 @@ class RedmineIssueEmptyFilterForm(forms.Form):
     param = forms.CharField(max_length=50, required=False)
     value = forms.CharField(max_length=255, required=False)
 
+    def clean_param(self):
+        param = self.cleaned_data["param"]
+
+        params = RedmineModule.params
+        if param not in params:
+            self.add_error('param', f'{param}は使用できないパラメータです。')
+        else:
+            return param
+
 
 class GitBranchForm(forms.Form):
     branch_name = forms.CharField(max_length=255, required=False)
 
 
-RedmineIssueFilterFormset = forms.formset_factory(RedmineIssueFilterForm, extra=5)
-RedmineIssueEmptyFilterFormset = forms.formset_factory(RedmineIssueEmptyFilterForm, extra=5)
+RedmineIssueFilterFormset = forms.formset_factory(
+    RedmineIssueFilterForm,
+    extra=5,
+    min_num=1,
+    validate_min=True,
+)
+
+RedmineIssueEmptyFilterFormset = forms.formset_factory(
+    RedmineIssueEmptyFilterForm,
+    extra=5,
+    min_num=1,
+    validate_min=True,
+)
