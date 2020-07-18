@@ -3,14 +3,13 @@
 <form method="POST">
 <h2>Redmine認証情報</h2>
 {{ auth_form.as_p }}
-
+<h2>Gitブランチ名</h2>
+{{ git_branch_form.as_p }}
 <h2>Issueのフィルター</h2>
 {{ issue_filter_form.as_p }}
 <h2>追加したいIssueのフィルター</h2>
 {{ issue_empty_filter_form.as_p }}
 
-<h2>Gitブランチ名</h2>
-{{ git_branch_form.as_p }}
-
 {% csrf_token %}
+<button type="submit">送信</button>
 </form>
