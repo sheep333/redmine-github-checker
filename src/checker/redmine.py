@@ -11,10 +11,10 @@ class RedmineModule():
         self.redmine = Redmine(**kwargs)
 
     def get_project(self, project_id):
-        return self.project.get(project_id)
+        return self.redmine.project.get(project_id)
 
     def get_issues(self, project_id):
-        return self.issue.filter(project_id=project_id)
+        return self.redmine.issue.filter(project_id=project_id)
 
     def filter_issues(self, **kwargs):
-        return self.issue.filter(**kwargs)
+        return self.redmine.issue.filter(**kwargs)

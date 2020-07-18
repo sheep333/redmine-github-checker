@@ -5,14 +5,14 @@ from django.shortcuts import render
 
 from .forms import (GitBranchForm, RedmineAuthForm,
                     RedmineIssueFilterFormset, RedmineIssueEmptyFilterFormset)
-from .redmine import Redmine
+from .redmine import RedmineModule
 from .git_checker import GitChecker
 
 
 def home(request):
     auth_form = RedmineAuthForm(request.POST or None)
-    issue_filter_form = RedmineIssueFilterFormset(request.POST or None)
-    issue_empty_filter_form = RedmineIssueEmptyFilterFormset(request.POST or None)
+    issue_filter_form = RedmineIssueFilterFormset(request.POST or None, prefix='issue_filter')
+    issue_empty_filter_form = RedmineIssueEmptyFilterFormset(request.POST or None, prefix='issue_empty_filter')
     git_branch_form = GitBranchForm(request.POST or None)
 
     context = {
@@ -22,16 +22,25 @@ def home(request):
         'git_branch_form': git_branch_form,
     }
 
-    if request.method == "POST" and auth_form.is_valid() and \
-            issue_filter_form.is_valid() and git_branch_form.is_valid():
+    if request.method == "POST" and \
+            auth_form.is_valid() and issue_filter_form.is_valid() and \
+            issue_empty_filter_form.is_valid() and git_branch_form.is_valid():
 
-        redmine = Redmine(**auth_form.cleaned_data)
-        issues = redmine.filter_issues(**issue_filter_form.cleaned_data)
+        redmine = RedmineModule(**auth_form.cleaned_data)
+        # IssueのフィルターをマージしてIssueを検索
+        params = {}
+        for data in issue_filter_form.cleaned_data:
+            if data:
+                params.update(data)
+        for data in issue_empty_filter_form.cleaned_data:
+            if data:
+                params.update(data)
+        issues = redmine.filter_issues(**params)
 
         result = []
-        git_checker = GitChecker(**git_branch_form.cleaned_data)
+        git_checker = GitChecker(git_branch_form.cleaned_data.get('branch_name'))
         for issue in issues:
-            result += git_checker(issue.issue_id)
+            result += git_checker.merge_check(issue.id)
 
         df = pd.DataFrame(result, columns=['issue_id', 'output'])
         response = HttpResponse(content_type='text/csv')
