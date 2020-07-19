@@ -10,23 +10,18 @@ class GitChecker():
 
     def _checkout_branch(self):
         try:
-            subprocess.call(f"cd {self.directory}", shell=True)
-        except Exception:
-            raise ValueError(f'{self.directory}に移動できません。')
-
-        try:
-            subprocess.call(f"git checkout {self.repository_name}", shell=True)
+            subprocess.run(f"git checkout {self.repository_name}", shell=True, cwd=self.directory)
         except Exception:
             raise ValueError(f'{self.repository_name}をチェックアウトできません')
 
         try:
-            subprocess.call(f"git pull", shell=True)
+            subprocess.run(f"git pull", shell=True, cwd=self.directory)
         except Exception:
             raise ValueError(f'{self.repository_name}のプルに失敗しました。')
 
-    def merge_check(id):
+    def merge_check(self, id):
         command = f"git log --merges --oneline|grep {id}"
-        output = subprocess.check_output(command, shell=True)
+        output = subprocess.run(command, shell=True, cwd=self.directory)
         if output is not None:
             return [id, output]
         else:

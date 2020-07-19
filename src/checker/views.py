@@ -3,7 +3,7 @@ import pandas as pd
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .forms import (GitBranchForm, RedmineAuthForm,
+from .forms import (GitBranchForm, RedmineAuthForm, RedmineIssueFilterForm,
                     RedmineIssueFilterFormset, RedmineIssueEmptyFilterFormset)
 from .redmine import RedmineModule
 from .git_checker import GitChecker
@@ -35,6 +35,7 @@ def home(request):
         for data in issue_empty_filter_form.cleaned_data:
             if data:
                 params.update(data)
+
         issues = redmine.filter_issues(**params)
 
         result = []
