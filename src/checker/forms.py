@@ -58,6 +58,7 @@ class RedmineIssueFilterForm(RedmineIssueEmptyFilterForm):
 
 class GitBranchForm(forms.Form):
     branch_name = forms.CharField(max_length=255)
+    directory = forms.CharField(max_length=512)
 
 
 class RedmineFilterFormSet(forms.BaseFormSet):

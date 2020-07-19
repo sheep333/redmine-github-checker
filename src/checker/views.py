@@ -38,7 +38,9 @@ def home(request):
         issues = redmine.filter_issues(**params)
 
         result = []
-        git_checker = GitChecker(git_branch_form.cleaned_data.get('branch_name'))
+        branch_name = git_branch_form.cleaned_data.get('branch_name')
+        directory = git_branch_form.cleaned_data.get('directory')
+        git_checker = GitChecker(branch_name, directory)
         for issue in issues:
             result += git_checker.merge_check(issue.id)
 

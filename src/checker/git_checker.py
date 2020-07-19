@@ -3,10 +3,17 @@ import subprocess
 
 class GitChecker():
 
-    def __init__(self, repository_name):
+    def __init__(self, repository_name, directory):
         self.repository_name = repository_name
+        self.directory = directory
+        self._checkout_branch()
 
-    def checkout_branch(self):
+    def _checkout_branch(self):
+        try:
+            subprocess.call(f"cd {self.directory}", shell=True)
+        except Exception:
+            raise ValueError(f'{self.directory}に移動できません。')
+
         try:
             subprocess.call(f"git checkout {self.repository_name}", shell=True)
         except Exception:
