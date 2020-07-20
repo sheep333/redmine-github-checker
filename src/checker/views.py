@@ -44,7 +44,7 @@ def home(request):
         directory = git_branch_form.cleaned_data.get('directory')
         git_checker = GitChecker(branch_name, directory)
         for issue in issues:
-            result += git_checker.merge_check(issue.id)
+            result.append(git_checker.merge_check(issue.id))
 
         # CSV化する
         df = pd.DataFrame(result, columns=['issue_id', 'output'])

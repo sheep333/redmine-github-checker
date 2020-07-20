@@ -7,7 +7,6 @@ class GitChecker():
         self.repository_name = repository_name
         self.directory = directory
         self._checkout_branch()
-        self._set_merged_list()
 
     def _checkout_branch(self):
         try:
@@ -20,15 +19,17 @@ class GitChecker():
         except Exception:
             raise ValueError(f'{self.repository_name}のプルに失敗しました。')
 
-    def _set_merged_list(self):
-        self.merged_list = subprocess.run(f"git log --merges --oneline", shell=True,
-                cwd=self.directory, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
     def merge_check(self, id):
-        result = subprocess.run(["grep", f"{id}"], input=self.merged_list.stdout,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        p1 = subprocess.Popen(["git", "log", "--merges", "--oneline"], cwd=self.directory,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p2 = subprocess.Popen(["grep", f"{id}"], stdin=p1.stdout, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, text=True)
+        p1.stdout.close()
+        output = p2.communicate()[0]
 
-        if result.stdout is not None:
-            return [id, p2.stdout]
+        if output is not None:
+            return [id, output]
         else:
             return [id, '']
+
+        p2.returncode # grep の終了コード
