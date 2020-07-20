@@ -20,6 +20,7 @@ class GitChecker():
             raise ValueError(f'{self.repository_name}のプルに失敗しました。')
 
     def merge_check(self, id):
+        # FIXME: 毎回データを取得するよりもtmpファイルを作ってgrepかける方が負担が少ないかも。
         p1 = subprocess.Popen(["git", "log", "--merges", "--oneline"], cwd=self.directory,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p2 = subprocess.Popen(["grep", f"{id}"], stdin=p1.stdout, stdout=subprocess.PIPE,
