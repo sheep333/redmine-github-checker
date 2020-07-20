@@ -26,8 +26,8 @@ def home(request):
             auth_form.is_valid() and issue_filter_form.is_valid() and \
             issue_empty_filter_form.is_valid() and git_branch_form.is_valid():
 
+        # RedmineのIssueフィルターをマージしてIssueを検索
         redmine = RedmineModule(**auth_form.cleaned_data)
-        # IssueのフィルターをマージしてIssueを検索
         params = {}
         for data in issue_filter_form.cleaned_data:
             if data:
@@ -38,6 +38,7 @@ def home(request):
 
         issues = redmine.filter_issues(**params)
 
+        # Githubのマージされたブランチと比較
         result = []
         branch_name = git_branch_form.cleaned_data.get('branch_name')
         directory = git_branch_form.cleaned_data.get('directory')
@@ -45,6 +46,7 @@ def home(request):
         for issue in issues:
             result += git_checker.merge_check(issue.id)
 
+        # CSV化する
         df = pd.DataFrame(result, columns=['issue_id', 'output'])
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=filename.csv'
