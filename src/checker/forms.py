@@ -1,3 +1,4 @@
+import logging
 from os import getenv
 
 from django import forms
@@ -5,6 +6,7 @@ from django.core.exceptions import ValidationError
 
 from .redmine import RedmineModule
 
+logger = logging.getLogger(__name__)
 
 class RedmineAuthForm(forms.Form):
     url = forms.URLField(
@@ -26,10 +28,13 @@ class RedmineAuthForm(forms.Form):
         data = super().clean()
         # ユーザとパスワードがなかったら環境変数からAPI KEYを取得
         if 'username' not in data or 'password' not in data:
+            logger.info("Redmine user_name and pass didn't input.")
             key = getenv('REDMINE_KEY')
             if key:
+                logger.info("Use environment API KEY!!")
                 data['key'] = key
             else:
+                logger.error("Authentication didn't succeed.")
                 raise ValidationError('Redmineの認証に必要な値が存在しません。')
         return data
 
@@ -55,6 +60,7 @@ class RedmineIssueEmptyFilterForm(forms.Form):
 
         params = RedmineModule.params
         if param not in params:
+            logger.error(f"Can't use paramter: {param}")
             self.add_error('param', f'{param}は使用できないパラメータです。')
         else:
             return param
@@ -96,6 +102,7 @@ class GitBranchForm(forms.Form):
         if not data:
             data = getenv('BRANCH_NAME')
             if not data:
+                logger.error("Can't find branch name")
                 raise ValidationError('ブランチ名が存在しません。')
         return data
 
@@ -105,6 +112,7 @@ class GitBranchForm(forms.Form):
         if not data:
             data = getenv('DIRECTORY')
             if not data:
+                logger.error("Can't find directory name")
                 raise ValidationError('ディレクトリ名が存在しません。')
         return data
 
@@ -118,6 +126,7 @@ class RedmineFilterFormSet(forms.BaseFormSet):
         for form in self.forms:
             data = form.cleaned_data
             if data.get('param') and (data['param'] in params):
+                logger.error("Same param set.")
                 raise forms.ValidationError("同じパラメータが含まれる場合には|区切りで入力してください。")
             else:
                 params += data
