@@ -1,9 +1,14 @@
-## Work in progress
+## このアプリでできること
+- RedmineのチケットのIDが指定したGitブランチにマージしているかをチェックする
 
-## アプリの起動
+## 使い方
+
+### 前提
+- python3.7が使用できること
+
+### アプリの起動
 
 ```
-pipenv shell
-cd src
-python manage.py runserver
+pipenv install --python path/to/python
+pipenv run python ./src/manage.py runserver
 ```

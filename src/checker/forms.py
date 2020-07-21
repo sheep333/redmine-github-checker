@@ -7,9 +7,20 @@ from .redmine import RedmineModule
 
 
 class RedmineAuthForm(forms.Form):
-    url = forms.URLField(required=True)
-    username = forms.CharField(max_length=255, required=False)
-    password = forms.CharField(widget=forms.PasswordInput, required=False)
+    url = forms.URLField(
+        required=True,
+        help_text='RedmineのURLを入力してください(必須)。',
+    )
+    username = forms.CharField(
+        max_length=255,
+        required=False,
+        help_text='Redmineのユーザ名を入力してください(入力しない場合にはAPI KEYを環境変数に指定してください)。',
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput,
+        required=False,
+        help_text='Redmineのパスワードを入力してください(入力しない場合にはAPI KEYを環境変数に指定してください)。',
+    )
 
     def clean(self):
         data = super().clean()
@@ -24,8 +35,14 @@ class RedmineAuthForm(forms.Form):
 
 
 class RedmineIssueEmptyFilterForm(forms.Form):
-    param = forms.CharField(max_length=50)
-    value = forms.CharField(max_length=255)
+    param = forms.CharField(
+        max_length=50,
+        help_text='RedmineでIssueのフィルターに使用できるパラメータを入力してください'
+    )
+    value = forms.CharField(
+        max_length=255,
+        help_text='RedmineでIssueのフィルターに設定する値を入力してください'
+    )
 
     def clean(self):
         data = super().clean()
@@ -53,12 +70,25 @@ class RedmineIssueFilterForm(RedmineIssueEmptyFilterForm):
         ('due_date', '期限日'),
     ]
 
-    param = forms.ChoiceField(choices=CHOICES, required=False, initial='none')
+    param = forms.ChoiceField(
+        choices=CHOICES,
+        required=False,
+        initial='none',
+        help_text='RedmineのIssueのフィルターを選択してください'
+    )
 
 
 class GitBranchForm(forms.Form):
-    branch_name = forms.CharField(max_length=255, required=False)
-    directory = forms.CharField(max_length=512, required=False)
+    branch_name = forms.CharField(
+        max_length=255,
+        required=False,
+        help_text='マージ状況を確認したいブランチ名を入力してください'
+    )
+    directory = forms.CharField(
+        max_length=512,
+        required=False,
+        help_text='確認するGitのリポジトリを入力してください'
+    )
 
     def clean_branch_name(self):
         data = self.cleaned_data['branch_name']
