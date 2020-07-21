@@ -1,15 +1,13 @@
-# Work in progress
-
 ## アプリの起動(Docker使用しない)
 
 ```
 pip install pipenv
+pipenv install
 pipenv shell
-cd src
-python manage.py runserver
+python src/manage.py runserver
 ```
 
-## アプリの起動(docker compose使用)
+## [WIP]アプリの起動(docker compose使用)
 
 ```
 docker-compose up
