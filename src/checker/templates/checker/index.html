@@ -2,12 +2,27 @@
 
 <form method="POST">
 <h2>Redmine認証情報</h2>
+{% for error in auth_form.errors %}
+  {{ error }}
+{% endfor %}
 {{ auth_form.as_p }}
+
 <h2>Gitブランチ名</h2>
+{% for error in git_branch_form.errors %}
+  {{ error }}
+{% endfor %}
 {{ git_branch_form.as_p }}
+
 <h2>Issueのフィルター</h2>
+{% for error in issue_filter_form.errors %}
+  {{ error }}
+{% endfor %}
 {{ issue_filter_form.as_p }}
+
 <h2>追加したいIssueのフィルター</h2>
+{% for error in issue_empty_filter_form.errors %}
+  {{ error }}
+{% endfor %}
 {{ issue_empty_filter_form.as_p }}
 
 {% csrf_token %}

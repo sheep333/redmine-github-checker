@@ -1,14 +1,14 @@
-## アプリの起動(Docker使用しない)
+## このアプリでできること
+- RedmineのチケットIDを含んだブランチが特定のGitのブランチにマージされているかをチェックする
+
+## 使い方
+
+### 前提
+- python3.7が使用できること
+
+### アプリの起動
 
 ```
-pip install pipenv
-pipenv install
-pipenv shell
-python src/manage.py runserver
-```
-
-## [WIP]アプリの起動(docker compose使用)
-
-```
-docker-compose up
+pipenv install --python path/to/python
+pipenv run python ./src/manage.py runserver
 ```
